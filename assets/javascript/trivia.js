@@ -37,7 +37,7 @@ var game = {
             userAnswer: null
         },
         {
-            question: 'What does [1,1,2,3,5,8].pop() return?',
+            question: 'What does [ 1 , 1 , 2 , 3 , 5 , 8 ].pop() return?',
             answers: ['1', '2', '3', '8'],
             correctAnswer: '4',
             userAnswer: null
@@ -61,13 +61,18 @@ var game = {
         for (i in game.questions[game.num].answers) {
             $('#trivia').append($(`<label><input type="radio" name="question" value="${parseInt(i) + 1}">${game.questions[game.num].answers[i]}</label>`));
         }
-        $('#trivia').append($('<button onclick="game.scoreQuestion()">Submit</button>'));
+        $('#trivia').append($('<button id="submit" onclick="game.scoreQuestion()">Submit</button>'));
         game.startTimer();
     },
     startTimer: function () {
-        game.timeout = setTimeout(game.scoreQuestion, 1000 * 31)
+        game.timeout = setTimeout(function(){
+            game.scoreQuestion();}, 1000 * 31);
         game.time = 30;
-        game.timer = setInterval(game.countDown, 1000);
+        game.timer = setInterval(function(){
+            game.countDown();}, 1000);
+    },
+    delayTimer : function(func){
+        game.timeout = setTimeout(func,5000);
     },
     countDown: function () {
         game.time--;
@@ -79,6 +84,7 @@ var game = {
     },
     scoreQuestion: function () {
         game.stopTimers();
+        $('#submit').remove();
         if ($('input:checked').val() === game.questions[game.num].correctAnswer) {
             game.score++;
             game.questions[game.num].userAnswer = 'correct';
@@ -92,13 +98,13 @@ var game = {
         else {
             $('#trivia').append(`<p>You didn't answer question ${game.num + 1}</p>`);
         }
-        $('#trivia').append(`The correct answer was  ${game.questions[game.num].correctAnswer}</p>`);
+        $('#trivia').append(`The correct answer was  ${game.questions[game.num].answers[parseInt(game.questions[game.num].correctAnswer)-1]}</p>`);
         game.num++;
         if (game.num === game.questions.length) {
-            game.timeout = setTimeout(game.gameOver(), 1000 * 5);
+            game.delayTimer(game.gameOver);
         }
         else {
-            game.timeout = setTimeout(game.displayQuestion(), 1000 * 5);
+            game.delayTimer(game.displayQuestion);
         }
     },
     gameOver: function () {
@@ -111,7 +117,9 @@ var game = {
             else {
                 $('#trivia').append(`<p>You didn't answer question ${parseInt(i) + 1}</p>`);
             }
-            $('#trivia').append(`The correct answer was  ${game.questions[i].correctAnswer}</p>`);
+            $('#trivia').append(`<p>${game.questions[i].question}</p>`);
+            $('#trivia').append(`The correct answer was  ${game.questions[i].answers[parseInt(game.questions[i].correctAnswer)-1]}</p>`);
+            $('#trivia').append($('<hr>'));
         }
     }
 };
