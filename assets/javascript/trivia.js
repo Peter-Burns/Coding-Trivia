@@ -61,11 +61,11 @@ var game = {
         for (i in game.questions[game.num].answers) {
             $('#trivia').append($(`<label><input type="radio" name="question" value="${parseInt(i) + 1}">${game.questions[game.num].answers[i]}</label>`));
         }
-        $('#trivia').append($(`<button onclick="game.scoreQuestion()">Submit</button>`));
+        $('#trivia').append($('<button onclick="game.scoreQuestion()">Submit</button>'));
         game.startTimer();
     },
     startTimer: function () {
-        game.timeout = setTimeout(game.scoreQuestion, 1000 * 30)
+        game.timeout = setTimeout(game.scoreQuestion, 1000 * 31)
         game.time = 30;
         game.timer = setInterval(game.countDown, 1000);
     },
@@ -73,9 +73,12 @@ var game = {
         game.time--;
         $('#clock').text(` ${game.time} seconds`);
     },
-    scoreQuestion: function () {
+    stopTimers: function () {
         clearInterval(game.timer);
         clearTimeout(game.timeout);
+    },
+    scoreQuestion: function () {
+        game.stopTimers();
         if ($('input:checked').val() === game.questions[game.num].correctAnswer) {
             game.score++;
             game.questions[game.num].userAnswer = 'correct';
@@ -83,12 +86,19 @@ var game = {
         else if ($('input:checked').val()) {
             game.questions[game.num].userAnswer = 'incorrect';
         }
-        game.num++;
-        if (game.num === game.questions.length) {
-            game.timeout = setTimeout(game.gameOver, 3000);
+        if (game.questions[game.num].userAnswer) {
+            $('#trivia').append(`<p>You got question ${game.num + 1} ${game.questions[game.num].userAnswer}</p>`);
         }
         else {
-            game.timeout = setTimeout(game.displayQuestion, 3000);
+            $('#trivia').append(`<p>You didn't answer question ${game.num + 1}</p>`);
+        }
+        $('#trivia').append(`The correct answer was  ${game.questions[game.num].correctAnswer}</p>`);
+        game.num++;
+        if (game.num === game.questions.length) {
+            game.timeout = setTimeout(game.gameOver(), 1000 * 5);
+        }
+        else {
+            game.timeout = setTimeout(game.displayQuestion(), 1000 * 5);
         }
     },
     gameOver: function () {
