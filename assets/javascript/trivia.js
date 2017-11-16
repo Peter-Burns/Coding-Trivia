@@ -1,4 +1,6 @@
+//game object
 var game = {
+    //question array
     questions: [
         {
             question: 'What is the html element that represents an image?',
@@ -48,40 +50,47 @@ var game = {
             correctAnswer: '4',
             userAnswer: null
         }],
+        //variables to hold score, question time left, what question num, the interval & timeout
     score: 0,
-    time: 30,
+    time: 31,
     num: 0,
     timer: null,
     timeout: null,
+    //removes the old question and timer, displays the current question and starts the timer
     displayQuestion: function () {
         $('#time').show();
         $('#clock').empty();
         $('#trivia').empty();
         $('#trivia').append($(`<h3>${game.questions[game.num].question}</h3>`));
+        //displays the answer possibilities as radio buttons
         for (i in game.questions[game.num].answers) {
             $('#trivia').append($(`<label><input type="radio" name="question" value="${parseInt(i) + 1}">${game.questions[game.num].answers[i]}</label>`));
         }
         $('#trivia').append($('<button id="submit" onclick="game.scoreQuestion()">Submit</button>'));
         game.startTimer();
     },
+    // starts the game timer and the countdown interval
     startTimer: function () {
-        game.timeout = setTimeout(function(){
-            game.scoreQuestion();}, 1000 * 31);
-        game.time = 30;
+        game.delayTimer(game.scoreQuestion,1000*32);
+        game.time = 31;
         game.timer = setInterval(function(){
             game.countDown();}, 1000);
     },
-    delayTimer : function(func){
-        game.timeout = setTimeout(func,5000);
+    //sets a delay after a user answer
+    delayTimer : function(func,time){
+        game.timeout = setTimeout(func,time);
     },
+    //updates the clock
     countDown: function () {
         game.time--;
         $('#clock').text(` ${game.time} seconds`);
     },
+    //clears the interval and timeout after a question
     stopTimers: function () {
         clearInterval(game.timer);
         clearTimeout(game.timeout);
     },
+    //scores an answer, removes the submit button to prevent multiple answers, calls the stoptimer, increments the question number and calls gameOver or displayQuestion depending on the game state
     scoreQuestion: function () {
         game.stopTimers();
         $('#submit').remove();
@@ -101,15 +110,16 @@ var game = {
         $('#trivia').append(`The correct answer was  ${game.questions[game.num].answers[parseInt(game.questions[game.num].correctAnswer)-1]}</p>`);
         game.num++;
         if (game.num === game.questions.length) {
-            game.delayTimer(game.gameOver);
+            game.delayTimer(game.gameOver,5000);
         }
         else {
-            game.delayTimer(game.displayQuestion);
+            game.delayTimer(game.displayQuestion,5000);
         }
     },
+    //removes the game elements and displays the questions and answers along with the user answers
     gameOver: function () {
         $('.gameElement').empty();
-        $('#trivia').append($(`<p>You got ${game.score} out of ${game.questions.length}!</p>`));
+        $('#trivia').append($(`<p><strong>You got ${game.score} out of ${game.questions.length}!<strong></p>`));
         for (i in game.questions) {
             if (game.questions[i].userAnswer) {
                 $('#trivia').append(`<p>You got question ${parseInt(i) + 1} ${game.questions[i].userAnswer}</p>`);
@@ -117,7 +127,7 @@ var game = {
             else {
                 $('#trivia').append(`<p>You didn't answer question ${parseInt(i) + 1}</p>`);
             }
-            $('#trivia').append(`<p>${game.questions[i].question}</p>`);
+            $('#trivia').append(`<p><strong>${game.questions[i].question}<strong></p>`);
             $('#trivia').append(`The correct answer was  ${game.questions[i].answers[parseInt(game.questions[i].correctAnswer)-1]}</p>`);
             $('#trivia').append($('<hr>'));
         }
