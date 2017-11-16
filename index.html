@@ -13,7 +13,19 @@
 </head>
 
 <body>
-    <form id='trivia'></form>
+    <div class='container wrapper'>
+        <h1>Coding Trivia</h1>
+        <div class='row'>
+            <div class='col-xs-6 col-xs-offset-3'>
+                <span hidden class='gameElement' id='time'>Time Left: </span>
+                <span class='gameElement' id='clock'></span>
+                <form class='gameElement' id='trivia'>
+                    <button onclick="game.displayQuestion()">Start</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src='assets/javascript/trivia.js'></script>
 </body>
 
 </html>

@@ -1,0 +1,19 @@
+h1,form{
+    text-align:center;
+}
+body{
+    background:lightsteelblue;
+}
+span{
+    text-align: left;
+}
+.wrapper{
+    background:white;
+    height:100vh;
+}
+button{
+    margin:5px;
+}
+label{
+    margin:5px;
+}
